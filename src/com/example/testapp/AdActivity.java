@@ -1,46 +1,68 @@
 package com.example.testapp;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.View;
+import android.view.Display;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.TranslateAnimation;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 public class AdActivity extends Activity{
 	
-	   private String url;
-	   private WebView browser;
-
-	   @Override		
-	   protected void onCreate(Bundle savedInstanceState) {
-	      super.onCreate(savedInstanceState);
-		  setContentView(R.layout.ad_activity);
-		  //url = savedInstanceState.getString("html_data");
-	      browser = (WebView)findViewById(R.id.webview1);
-	      browser.setWebViewClient(new WebViewBrowser());
-	   }
-
-
-	   public void open(View view){
-	      browser.getSettings().setLoadsImagesAutomatically(true);
-	      browser.getSettings().setJavaScriptEnabled(true);
-	      browser.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-	      browser.loadUrl("http://www.google.com");
-	   }
-	  
-	   private class WebViewBrowser extends WebViewClient {
-	      @Override
-	      public boolean shouldOverrideUrlLoading(WebView view, String url) {
-	         view.loadUrl(url);
-	         return true;
-	      }
-	   }
-
-	   @Override
-	   public boolean onCreateOptionsMenu(Menu menu) {
-	      // Inflate the menu; this adds items to the action bar if it is present.
-	      getMenuInflater().inflate(R.menu.main, menu);
-	      return true;
-	   }
+	
+	private float screenWidth;
+	private float screenHeight;
+	private float scalefactor;
+	private float paddingScalefactor;
+	private ScrollView scrollView;
+	private	LinearLayout baseContainer;
+	private WebView webView;
+	
+	@Override 
+	public void onCreate(Bundle savedInstanceState) 
+	{ 
+	    super.onCreate(savedInstanceState);
+	    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+	    
+	    createBaseContainer();
+	    setContentView(scrollView);
+	    TranslateAnimation animation = new TranslateAnimation(0, 0, -500,0);
+		animation.setDuration(500); // duartion in ms
+		animation.setFillAfter(false);
+		scrollView.startAnimation(animation);
+	}
+	
+	
+	private void createBaseContainer() 
+	{ 
+		
+		scrollView = new ScrollView(getApplicationContext());
+	    scrollView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+	    webView = new WebView(getApplicationContext());
+	    webView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		webView.setBackgroundColor(Color.DKGRAY);
+		webView.loadUrl("http://www.google.com");
+	    baseContainer = new LinearLayout(this); 
+		baseContainer.addView(webView);
+		Display display = getWindowManager().getDefaultDisplay(); 
+		screenWidth = display.getWidth();
+		screenHeight = display.getHeight();
+		if(screenHeight < screenWidth)
+			screenWidth = screenHeight;
+		baseContainer.setMinimumWidth((int) screenWidth);
+		paddingScalefactor = (float)(screenWidth/12.0f);
+		scalefactor = (float)((screenWidth-paddingScalefactor)/600.0f);
+		
+		baseContainer.setLayoutParams(new LayoutParams((int)(screenWidth-paddingScalefactor), (int)(360*scalefactor)));
+		baseContainer.setOrientation(LinearLayout.VERTICAL); 
+		baseContainer.setBackgroundColor(Color.DKGRAY);
+		scrollView.setBackgroundColor(Color.DKGRAY);
+		scrollView.addView(baseContainer);
+	}
 }
