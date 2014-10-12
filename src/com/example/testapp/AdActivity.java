@@ -83,9 +83,9 @@ public class AdActivity extends Activity{
         Log.d("activity2",url);
         webView.loadUrl(url);
         webView.setVisibility(View.VISIBLE);
-        TranslateAnimation animation = new TranslateAnimation(0, 0, -500,0);
-        animation.setDuration(500); // duartion in ms
-        animation.setFillAfter(false);
-        scrollView.startAnimation(animation);
+//        TranslateAnimation animation = new TranslateAnimation(0, 0, -500,0);
+//        animation.setDuration(500); // duartion in ms
+//        animation.setFillAfter(false);
+//        scrollView.startAnimation(animation);
     }
 }
